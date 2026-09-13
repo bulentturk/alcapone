@@ -20,6 +20,11 @@ Repository secret:
 
 Workflow: **Actions > Generate engineering Short > Run workflow**
 
+İlk kurulumda `.github/workflows/first-real-short.yml` yalnızca `master` dalına
+eklendiği ilk push'ta çalışır. `github.run_attempt == 1` koruması nedeniyle ücretli
+iş yeniden çalıştırılamaz. Sonraki videolar manuel workflow üzerinden üretilir.
+
+
 ## Yerel deneme
 
 FFmpeg ve Python 3.11+ gerekir.
