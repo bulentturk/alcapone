@@ -1,0 +1,104 @@
+{
+  "id": "pilot01-reva",
+  "title": "Mazot Yakıyor, Elektrikle Yürüyor! | Cat 798 AC",
+  "source_url": "https://www.cat.com/en_AU/products/new/equipment/off-highway-trucks/mining-trucks/15970073.html",
+  "voice": {
+    "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+    "display_name": "Roger - Laid-Back, Casual, Resonant",
+    "model_id": "eleven_multilingual_v2",
+    "voice_settings": {
+      "speed": 1.0,
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.0,
+      "use_speaker_boost": true
+    }
+  },
+  "sentences": [
+    "Bu dev maden kamyonu mazot yakıyor.",
+    "Ama tekerleklerini elektrik motorları döndürüyor!",
+    "Cat 798 AC’de dizel motor, önce bir jeneratörü çeviriyor.",
+    "Üretilen elektrik, elektronik sürücüler üzerinden arka tekerlek motorlarına gidiyor.",
+    "Enerji dizelden, hareket elektrikten.",
+    "Asıl ilginç kısım ise yokuş aşağıda.",
+    "Elektrikli yavaşlatma sırasında tekerlekler bu motorları çeviriyor.",
+    "Motorlar bu kez jeneratör gibi çalışarak elektrik üretiyor.",
+    "Peki, bu elektrik bataryaya mı gidiyor?",
+    "Bu dizel-elektrik düzende hayır.",
+    "Frenleme enerjisi dirençlerde ısıya çevriliyor, fanlarla uzaklaştırılıyor.",
+    "Kamyonu yavaşlatan şey, burada enerjinin kontrollü biçimde ısıya dönüştürülmesi.",
+    "Demek ki elektrikle yürümek, bataryalı olmak demek değil!"
+  ],
+  "reference": {
+    "audio_sha256": "354948df397a267be4b5d57ff821e87855f472d23c3d46d0badf2dedfa2f2fbd",
+    "filename": "ElevenLabs_2026-09-13T12_28_53_Roger - Laid-Back, Casual, Resonant_pre_sp100_s50_sb75_se0_b_m2.mp3",
+    "voice_settings_evidence": "Export filename sp100_s50_sb75_se0_b_m2; Roger ID from existing approved repository setting. Model m2 interpreted as Multilingual v2.",
+    "timing": [
+      {
+        "start": 0.03,
+        "end": 2.192,
+        "text": "Bu dev maden kamyonu mazot yakıyor."
+      },
+      {
+        "start": 2.568563,
+        "end": 5.170313,
+        "text": "Ama tekerleklerini elektrik motorları döndürüyor!"
+      },
+      {
+        "start": 6.109312,
+        "end": 10.961875,
+        "text": "Cat 798 AC’de dizel motor, önce bir jeneratörü çeviriyor."
+      },
+      {
+        "start": 11.603125,
+        "end": 16.274625,
+        "text": "Üretilen elektrik, elektronik sürücüler üzerinden arka tekerlek motorlarına gidiyor."
+      },
+      {
+        "start": 16.820812,
+        "end": 19.14675,
+        "text": "Enerji dizelden, hareket elektrikten."
+      },
+      {
+        "start": 20.051188,
+        "end": 22.161875,
+        "text": "Asıl ilginç kısım ise yokuş aşağıda."
+      },
+      {
+        "start": 23.142125,
+        "end": 26.776688,
+        "text": "Elektrikli yavaşlatma sırasında tekerlekler bu motorları çeviriyor."
+      },
+      {
+        "start": 27.3745,
+        "end": 30.709625,
+        "text": "Motorlar bu kez jeneratör gibi çalışarak elektrik üretiyor."
+      },
+      {
+        "start": 31.744625,
+        "end": 34.225875,
+        "text": "Peki, bu elektrik bataryaya mı gidiyor?"
+      },
+      {
+        "start": 34.604937,
+        "end": 36.433875,
+        "text": "Bu dizel-elektrik düzende hayır."
+      },
+      {
+        "start": 36.802,
+        "end": 41.242625,
+        "text": "Frenleme enerjisi dirençlerde ısıya çevriliyor, fanlarla uzaklaştırılıyor."
+      },
+      {
+        "start": 42.137313,
+        "end": 46.75125,
+        "text": "Kamyonu yavaşlatan şey, burada enerjinin kontrollü biçimde ısıya dönüştürülmesi."
+      },
+      {
+        "start": 47.160063,
+        "end": 50.449,
+        "text": "Demek ki elektrikle yürümek, bataryalı olmak demek değil!"
+      }
+    ]
+  }
+}

@@ -32,8 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-      ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
       SHORT_TITLE: ${{ inputs.title }}
       SHORT_SCRIPT: ${{ inputs.script }}
       SHORT_SOURCE_URL: ${{ inputs.source_url }}
@@ -57,6 +55,9 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Generate Short
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
         run: |
           python src/generate_short.py \
             --title "$SHORT_TITLE" \
