@@ -48,3 +48,19 @@ jobs:
           path: output/
           if-no-files-found: error
           retention-days: 7
+
+      - name: Render RevA scenes without paid API calls
+        run: |
+          python src/pilot01.py prepare --offline-tone --output-dir output-reva-ci
+          python src/pilot01.py render --output-dir output-reva-ci
+
+      - name: Upload RevA smoke test
+        uses: actions/upload-artifact@v4
+        with:
+          name: reva-offline-smoke-test
+          path: |
+            output-reva-ci/engineering-short.mp4
+            output-reva-ci/metadata.json
+            output-reva-ci/qa/contact-sheet.jpg
+          if-no-files-found: error
+          retention-days: 7

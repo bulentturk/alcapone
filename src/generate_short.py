@@ -37,7 +37,7 @@ def api_headers(api_key: str) -> dict[str, str]:
 
 
 def check_response(response: requests.Response, action: str) -> None:
-    if response.ok:
+    if 200 <= response.status_code < 300:
         return
     hints = {
         400: "API key or request configuration was rejected.",
@@ -54,22 +54,26 @@ def check_response(response: requests.Response, action: str) -> None:
 
 
 def resolve_voice(api_key: str, configured_voice_id: str | None) -> tuple[str, str]:
-    if configured_voice_id:
+    if configured_voice_id and configured_voice_id.strip():
         return configured_voice_id.strip(), "configured ELEVENLABS_VOICE_ID"
     return DEFAULT_VOICE_ID, "approved Roger voice"
 
 
 def generate_speech(
-    api_key: str, voice_id: str, script: str, output_path: Path
+    api_key: str, voice_id: str, script: str, output_path: Path,
+    *, model_id: str | None = None, voice_settings: dict | None = None,
 ) -> dict:
-    response = requests.post(
+    if not re.fullmatch(r"[A-Za-z0-9]{20}", voice_id):
+        raise RuntimeError("Invalid voice ID format.")
+    try:
+        response = requests.post(
         f"{API_BASE}/v1/text-to-speech/{voice_id}/with-timestamps",
         headers=api_headers(api_key),
         params={"output_format": "mp3_44100_128"},
         json={
             "text": script,
-            "model_id": os.getenv("ELEVENLABS_MODEL_ID", "eleven_multilingual_v2"),
-            "voice_settings": {
+            "model_id": model_id or os.getenv("ELEVENLABS_MODEL_ID", "eleven_multilingual_v2"),
+            "voice_settings": voice_settings if voice_settings is not None else {
                 "stability": 0.55,
                 "similarity_boost": 0.78,
                 "style": 0.18,
@@ -77,11 +81,20 @@ def generate_speech(
             },
         },
         timeout=120,
-    )
+        allow_redirects=False,
+        )
+    except requests.RequestException:
+        raise RuntimeError("ElevenLabs connection failed. No automatic retry.") from None
     check_response(response, "speech generation")
-    payload = response.json()
-    output_path.write_bytes(base64.b64decode(payload["audio_base64"]))
-    return payload.get("normalized_alignment") or payload.get("alignment") or {}
+    try:
+        payload = response.json()
+        audio_bytes = base64.b64decode(payload["audio_base64"], validate=True)
+        if len(audio_bytes) < 100:
+            raise ValueError()
+    except (ValueError, KeyError, TypeError):
+        raise RuntimeError("ElevenLabs returned invalid audio. No automatic retry.") from None
+    output_path.write_bytes(audio_bytes)
+    return payload.get("alignment") or payload.get("normalized_alignment") or {}
 
 
 def words_from_alignment(alignment: dict) -> list[tuple[str, float, float]]:
@@ -417,6 +430,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except Exception as exc:
-        print(f"ERROR: {exc}", file=sys.stderr)
-        raise
+    except Exception:
+        print("ERROR: Short generation failed. Check inputs, TTS access, and render dependencies.", file=sys.stderr)
+        raise SystemExit(1) from None

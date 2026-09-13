@@ -1,11 +1,7 @@
 name: Validate key and generate first Short
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - .github/workflows/validate-elevenlabs-key-once.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,8 +11,6 @@ jobs:
     if: github.repository == 'bulentturk/alcapone' && github.run_attempt == 1
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
 
     steps:
       - name: Checkout
@@ -35,6 +29,8 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: Validate key without generating audio
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         shell: bash
         run: |
           python - <<'PY'
@@ -76,6 +72,8 @@ jobs:
           PY
 
       - name: Generate first real Short once
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         run: |
           python src/generate_short.py \
             --title "Dev Maden Kamyonu Elektrikli mi?" \

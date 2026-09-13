@@ -1,0 +1,67 @@
+name: Generate RevA engineering Short
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths: [.github/workflows/pilot01-reva.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pilot01-reva-production
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    # One request on this reviewed workflow merge. Re-runs cannot spend again.
+    if: github.repository == 'bulentturk/alcapone' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install render dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+          python -m pip install -r requirements.txt
+      - name: Verify renderer before spending credits
+        run: python src/pilot01.py preflight
+      - name: Generate one Roger narration with RevA settings
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: python src/pilot01.py prepare --output-dir output
+      - name: Preserve speech before rendering
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reva-speech-${{ github.run_id }}
+          path: |
+            output/voiceover.mp3
+            output/timing.json
+            output/speech.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Render six RevA scenes and verify MP4
+        run: python src/pilot01.py render --output-dir output
+      - name: Upload completed review video
+        uses: actions/upload-artifact@v4
+        with:
+          name: reva-short-${{ github.run_id }}
+          path: |
+            output/engineering-short.mp4
+            output/captions.srt
+            output/youtube-description.txt
+            output/metadata.json
+            output/poster.jpg
+            output/qa/contact-sheet.jpg
+            output/qa/probe.json
+          if-no-files-found: error
+          retention-days: 14
