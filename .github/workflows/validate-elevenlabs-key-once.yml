@@ -66,6 +66,9 @@ jobs:
               status = response.json().get("detail", {}).get("status", "provider_error")
           except (ValueError, AttributeError):
               status = "provider_error"
+          if status == "missing_permissions":
+              print("RESULT: credential_recognized; subscription_read_not_allowed")
+              raise SystemExit(0)
           if status not in safe_statuses:
               status = "provider_error"
           print(f"RESULT: {status} (HTTP {response.status_code})")
