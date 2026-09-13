@@ -1,0 +1,50 @@
+name: Validate Shorts pipeline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+          python -m pip install -r requirements.txt pytest
+
+      - name: Run tests
+        run: python -m pytest -q
+
+      - name: Render offline smoke test
+        run: |
+          python src/generate_short.py \
+            --title "Yeraltı Madenlerinde Otonom Makineler" \
+            --script "Otonom yeraltı makineleri yalnızca operatörü kabinden çıkarmıyor. Çevrim süresini daha tutarlı hale getiriyor, üretim verisini sürekli topluyor ve riskli bölgelerde insan maruziyetini azaltıyor." \
+            --source-url "https://www.algo-team.com" \
+            --output-dir output \
+            --offline-tone
+
+      - name: Upload smoke-test video
+        uses: actions/upload-artifact@v4
+        with:
+          name: shorts-offline-smoke-test
+          path: output/
+          if-no-files-found: error
+          retention-days: 7
