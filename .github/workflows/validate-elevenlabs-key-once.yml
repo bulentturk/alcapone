@@ -1,4 +1,4 @@
-name: Validate ElevenLabs key once
+name: Validate key and generate first Short
 
 on:
   push:
@@ -11,14 +11,29 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  validate-and-generate:
     if: github.repository == 'bulentturk/alcapone' && github.run_attempt == 1
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 15
     env:
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+          python -m pip install -r requirements.txt
+
       - name: Validate key without generating audio
         shell: bash
         run: |
@@ -56,3 +71,20 @@ jobs:
           print(f"RESULT: {status} (HTTP {response.status_code})")
           sys.exit(1)
           PY
+
+      - name: Generate first real Short once
+        run: |
+          python src/generate_short.py \
+            --title "Dev Maden Kamyonu Elektrikli mi?" \
+            --script "Cat 798 AC, dizel elektrik tahrik kullanır. Dizel motor, tekerlekleri mekanik olarak doğrudan çevirmek yerine bir jeneratörü tahrik eder. Üretilen elektrik, AC sürücüler üzerinden arka tekerlek motorlarına gider. Yokuş aşağı inerken elektrikli yavaşlatma sistemi, tekerlek motorlarını jeneratör gibi kullanır ve ortaya çıkan enerji dirençlerde ısıya dönüştürülür. Yani elektrikle yürüyen her iş makinesi bataryalı değildir." \
+            --source-url "https://www.cat.com/en_US/products/new/equipment/off-highway-trucks/mining-trucks/15970073.html" \
+            --output-dir output
+
+      - name: Upload review package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-real-engineering-short-retry-${{ github.run_id }}
+          path: output/
+          if-no-files-found: warn
+          retention-days: 14
