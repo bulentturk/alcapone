@@ -39,8 +39,18 @@ def api_headers(api_key: str) -> dict[str, str]:
 def check_response(response: requests.Response, action: str) -> None:
     if response.ok:
         return
-    detail = response.text[:500].replace("\n", " ")
-    raise RuntimeError(f"ElevenLabs {action} failed ({response.status_code}): {detail}")
+    hints = {
+        400: "API key or request configuration was rejected.",
+        401: "Check API key validity and TTS permission.",
+        403: "Check TTS permission and voice availability.",
+        404: "The approved voice may be unavailable.",
+        422: "A speech-generation setting was rejected.",
+        429: "Check ElevenLabs credits and rate limits.",
+    }
+    hint = hints.get(response.status_code, "The provider rejected the request.")
+    raise RuntimeError(
+        f"ElevenLabs {action} failed (HTTP {response.status_code}). {hint} No automatic retry."
+    )
 
 
 def resolve_voice(api_key: str, configured_voice_id: str | None) -> tuple[str, str]:
